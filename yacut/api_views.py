@@ -15,6 +15,10 @@ def create_link():
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
     if 'custom_id' not in data:
         data['custom_id'] = get_unique_short_id()
+    if not data['custom_id'].isalnum():
+        raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+    if len(data['custom_id']) > 16:
+        raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
     url_map = URLMap()
     url_map.from_dict(data)
     db.session.add(url_map)
