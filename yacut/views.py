@@ -1,7 +1,7 @@
 import random
 import string
 
-from flask import flash, redirect, render_template, request, url_for
+from flask import abort, flash, redirect, render_template, request
 
 from . import app, db
 from .forms import URLMapForm
@@ -17,6 +17,8 @@ def get_unique_short_id(length=6):
 @app.route('/<string:short_link>')
 def redirect_to_original(short_link):
     item = URLMap.query.filter_by(short=short_link).first()
+    if item is None:
+        abort(404)
     return redirect(item.original)
 
 
