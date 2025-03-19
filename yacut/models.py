@@ -16,3 +16,8 @@ class URLMap(db.Model):
             short=self.short,
             timestamp=self.timestamp
         )
+
+    def from_dict(self, data):
+        for field in ['original', 'short']:
+            if field in data:
+                setattr(self, field, data[field])
