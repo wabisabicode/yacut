@@ -27,8 +27,9 @@ def index_view():
     form = URLMapForm()
     if form.validate_on_submit():
         original = form.original_link.data
-        # if not original:
-        #      raise FormError('\"url\" является обязательным полем!')
+        if not original:
+            flash('\"url\" является обязательным полем!')
+            return render_template('index.html', form=form)
 
         short = form.custom_id.data
         if not short:
@@ -37,6 +38,9 @@ def index_view():
                 short = get_unique_short_id()
         elif URLMap.query.filter_by(short=short).first() is not None:
             flash('Предложенный вариант короткой ссылки уже существует.')
+            return render_template('index.html', form=form)
+        elif not short.isalnum():
+            flash('Указано недопустимое имя для короткой ссылки')
             return render_template('index.html', form=form)
 
         url_map = URLMap(
