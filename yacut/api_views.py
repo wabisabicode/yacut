@@ -23,7 +23,11 @@ def create_link():
     url_map.from_dict(data)
     db.session.add(url_map)
     db.session.commit()
-    return jsonify(url_map.to_dict()), 201
+    return_dict = dict(
+        url=url_map.original,
+        short_link=url_map.short
+    )
+    return jsonify(return_dict), 201
 
 
 @app.route('/api/id/<string:short_id>')
