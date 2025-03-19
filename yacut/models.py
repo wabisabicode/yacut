@@ -18,11 +18,11 @@ class URLMap(db.Model):
         )
 
     def from_dict(self, data):
-        for field in ['url', 'custom_id']:
-            if 'url' in data:
-                self.original = data['url']
-            if 'custom_id' in data:
-                self.short = data['custom_id']
+        field_mapping = {
+            'url': 'original',
+            'custom_id': 'short'
+        }
 
-            # if field in data:
-            #     setattr(self, field, data[field])
+        for api_field, model_field in field_mapping.items():
+            if api_field in data:
+                setattr(self, model_field, data[api_field])
