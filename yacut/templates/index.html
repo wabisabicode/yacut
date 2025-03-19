@@ -12,36 +12,31 @@
         <div class="col-sm">
         </div>
         <div class="col-sm">
-          <form>
+          <form method="POST" novalidate>
+            {{ form.csrf_token }}
             <div>
               <div>
-                <input type="text" class="form-control form-control-lg py-2 mb-3" id="form-title" name=""
-                  placeholder="Длинная ссылка">
+                {{ form.original_link(type="text", class="form-control form-control-lg py-2 mb-3", id="form-title" , placeholder=form.original_link.label.text) }}
                 <p>
-                  {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                      {% for message in messages %}
-                        <span style="color:red">{{ message }}</span>
-                      {% endfor %}
-                    {% endif %}
-                  {% endwith %}
+                  <span style="color:red">
+                    {% for error in form.original_link.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </span>
                 </p>
               </div>
               <div>
-                <input type="url" class="form-control form-control-lg py-2 mb-3" id="form-link" name=""
-                  placeholder="Ваш вариант короткой ссылки">
+                {{ form.custom_id(type="url", class="form-control form-control-lg py-2 mb-3", id="form-link", placeholder=form.custom_id.label.text) }}
                 <p>
-                  {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                      {% for message in messages %}
-                        <span style="color:red">{{ message }}</span>
-                      {% endfor %}
-                    {% endif %}
-                  {% endwith %}
+                  <span style="color:red">
+                    {% for error in form.custom_id.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </span>
                 </p>
               </div>
 
-              <input type="submit" class="btn btn-primary" value="Создать">
+              {{ form.submit(type="submit", class="btn btn-primary") }}
             </div>
           </form>
         </div>
@@ -63,6 +58,11 @@
                 {% endfor %}
               {% endif %}
             {% endwith %}
+            {% if short_link %}
+            <p class="text-center">
+              <a href="{{ short_link }}">{{ short_link }}</a>
+            </p>
+            {% endif %}
           </p>
         </div>
         <div class="col-sm">
