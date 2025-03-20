@@ -13,7 +13,7 @@ def create_link():
         raise InvalidAPIUsage('Отсутствует тело запроса')
     if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
-    if 'custom_id' not in data:
+    if 'custom_id' not in data or data['custom_id'] == '':
         data['custom_id'] = get_unique_short_id()
     if not data['custom_id'].isalnum():
         raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
