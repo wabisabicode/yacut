@@ -50,5 +50,5 @@ def create_link():
 def get_original_link(short_id):
     item = URLMap.get_by_short_link(short_id)
     if item is None:
-        raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.BAD_REQUEST)
+        raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.NOT_FOUND)
     return jsonify({'url': item.original}), HTTPStatus.OK
