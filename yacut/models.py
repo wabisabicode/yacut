@@ -2,11 +2,13 @@ from datetime import datetime
 
 from yacut import db
 
+from .constants import ORIGINAL_LINK_MAX_LEN, SHORT_LINK_MAX_LEN
+
 
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    original = db.Column(db.String(256), nullable=False)
-    short = db.Column(db.String(16), unique=True)
+    original = db.Column(db.String(ORIGINAL_LINK_MAX_LEN), nullable=False)
+    short = db.Column(db.String(SHORT_LINK_MAX_LEN), unique=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow())
 
     def to_dict(self):
