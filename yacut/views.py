@@ -14,6 +14,12 @@ def get_unique_short_id(length=6):
     return random_string
 
 
+def create_full_url(path):
+    base_url = request.host_url
+    full_url = base_url + path
+    return full_url
+
+
 @app.route('/<string:short_link>')
 def redirect_to_original(short_link):
     item = URLMap.query.filter_by(short=short_link).first()
@@ -51,7 +57,9 @@ def index_view():
         db.session.commit()
 
         flash('Ваша новая ссылка готова')
-        base_url = request.host_url
-        short_link = base_url + short
-        return render_template('index.html', form=form, short_link=short_link)
+        return render_template(
+            'index.html',
+            form=form,
+            short_link=create_full_url(short)
+        )
     return render_template('index.html', form=form)
