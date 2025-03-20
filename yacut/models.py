@@ -1,14 +1,14 @@
-from datetime import datetime
 import random
 import re
 import string
+from datetime import datetime
 
 from flask import flash
 
 from yacut import db
 
-from .error_handlers import InvalidAPIUsage
 from .constants import ORIGINAL_LINK_MAX_LEN, SHORT_LINK_MAX_LEN
+from .error_handlers import InvalidAPIUsage
 
 
 def is_latin_and_num(s):
@@ -47,18 +47,20 @@ class URLMap(db.Model):
                 short = get_unique_short_id()
 
         elif URLMap.get_by_short_link(short) is not None:
+            msg = 'Предложенный вариант короткой ссылки уже существует.'
             if api:
-                raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.')
+                raise InvalidAPIUsage(msg)
             else:
-                flash('Предложенный вариант короткой ссылки уже существует.')
-                return
+                flash(msg)
+                return None
 
         if not is_latin_and_num(short) or len(short) > SHORT_LINK_MAX_LEN:
+            msg = 'Указано недопустимое имя для короткой ссылки'
             if api:
-                raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+                raise InvalidAPIUsage(msg)
             else:
-                flash('Указано недопустимое имя для короткой ссылки')
-                return
+                flash(msg)
+                return None
 
         url_map = URLMap(
             original=original,
