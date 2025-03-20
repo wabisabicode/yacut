@@ -51,12 +51,14 @@ class URLMap(db.Model):
                 raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.')
             else:
                 flash('Предложенный вариант короткой ссылки уже существует.')
+                return
 
         if not is_latin_and_num(short) or len(short) > SHORT_LINK_MAX_LEN:
             if api:
                 raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
             else:
                 flash('Указано недопустимое имя для короткой ссылки')
+                return
 
         url_map = URLMap(
             original=original,
