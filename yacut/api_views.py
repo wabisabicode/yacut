@@ -30,9 +30,10 @@ def create_link():
     return jsonify(return_dict), 201
 
 
-@app.route('/api/id/<string:short_id>')
+@app.route('/api/id/<string:short_id>/')
 def get_original_link(short_id):
     item = URLMap.query.filter_by(short=short_id).first()
+    print(item, type(item))
     if item is None:
         raise InvalidAPIUsage('Указанный id не найден')
     return jsonify({'url': item.original}), 200
