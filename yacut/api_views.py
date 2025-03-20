@@ -16,6 +16,7 @@ def create_link():
     if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
 
+    custom_id = data.get('custom_id')
     # if 'custom_id' not in data or data['custom_id'] == '':
         # data['custom_id'] = get_unique_short_id()
     # if 'custom_id' not in data:
@@ -30,7 +31,7 @@ def create_link():
     # if not is_latin_and_num(custom_id) or len(custom_id) > SHORT_LINK_MAX_LEN:
     #     raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
     try:
-        url_map = URLMap.check_short_and_add(data['url'], data['custom_id'], api=True)
+        url_map = URLMap.check_short_and_add(data['url'], custom_id, api=True)
     # url_map = URLMap()
     # url_map.from_dict(data)
     # db.session.add(url_map)
