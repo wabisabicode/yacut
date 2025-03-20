@@ -19,7 +19,7 @@ def create_link():
     custom_id = data.get('custom_id')
 
     try:
-        url_map = URLMap.check_short_and_add(data['url'], custom_id, api=True)
+        url_map = URLMap.get_or_create_short(data['url'], custom_id, api=True)
 
         return_dict = dict(
             url=url_map.original,

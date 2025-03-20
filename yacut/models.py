@@ -40,7 +40,7 @@ class URLMap(db.Model):
         return URLMap.query.filter_by(short=short_link).first()
 
     @staticmethod
-    def check_short_and_add(original, short, api=False):
+    def get_or_create_short(original, short, api=False):
         if not short or short == '':
             short = get_unique_short_id()
             while URLMap.get_by_short_link(short) is not None:

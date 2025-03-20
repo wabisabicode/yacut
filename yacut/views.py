@@ -30,7 +30,7 @@ def index_view():
 
         short = form.custom_id.data
 
-        url_map = URLMap.check_short_and_add(original, short)
+        url_map = URLMap.get_or_create_short(original, short)
 
         if not url_map:
             return render_template('index.html', form=form)
