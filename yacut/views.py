@@ -10,7 +10,7 @@ from .models import URLMap
 
 def get_unique_short_id(length=6):
     characters = string.ascii_letters + string.digits
-    random_string = "".join(random.choice(characters) for _ in range(length))
+    random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string
 
 
@@ -22,7 +22,7 @@ def create_full_url(path):
 
 @app.route('/<string:short_link>')
 def redirect_to_original(short_link):
-    item = URLMap.query.filter_by(short=short_link).first()
+    item = URLMap.get_by_short_link(short_link)
     if item is None:
         abort(404)
     return redirect(item.original)
@@ -40,9 +40,9 @@ def index_view():
         short = form.custom_id.data
         if not short:
             short = get_unique_short_id()
-            while URLMap.query.filter_by(short=short).first() is not None:
+            while URLMap.get_by_short_link(short) is not None:
                 short = get_unique_short_id()
-        elif URLMap.query.filter_by(short=short).first() is not None:
+        elif URLMap.get_by_short_link(short) is not None:
             flash('Предложенный вариант короткой ссылки уже существует.')
             return render_template('index.html', form=form)
         elif not short.isalnum():

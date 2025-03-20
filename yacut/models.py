@@ -19,6 +19,10 @@ class URLMap(db.Model):
             timestamp=self.timestamp
         )
 
+    @staticmethod
+    def get_by_short_link(short_link):
+        return URLMap.query.filter_by(short=short_link).first()
+
     def from_dict(self, data):
         field_mapping = {
             'url': 'original',

@@ -26,7 +26,7 @@ def create_link():
 
     custom_id = data['custom_id']
 
-    if URLMap.query.filter_by(short=custom_id).first() is not None:
+    if URLMap.get_by_short_link(custom_id) is not None:
         raise InvalidAPIUsage(
             'Предложенный вариант короткой ссылки уже существует.'
         )
@@ -47,7 +47,7 @@ def create_link():
 
 @app.route('/api/id/<string:short_id>/')
 def get_original_link(short_id):
-    item = URLMap.query.filter_by(short=short_id).first()
+    item = URLMap.get_by_short_link(short_id)
     if item is None:
         raise InvalidAPIUsage('Указанный id не найден', 404)
     return jsonify({'url': item.original}), 200
