@@ -3,14 +3,14 @@ from flask import jsonify, request
 from . import app, db
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
-from .views import get_unique_short_id
+from .views import create_full_url, get_unique_short_id
 
 
 @app.route('/api/id/', methods=['POST'])
 def create_link():
-    data = request.get_json()
+    data = request.get_json(silent=True)
     if data is None:
-        raise InvalidAPIUsage('В запросе отсутствуют обязательные поля')
+        raise InvalidAPIUsage('Отсутствует тело запроса')
     if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
     if 'custom_id' not in data:
@@ -25,7 +25,7 @@ def create_link():
     db.session.commit()
     return_dict = dict(
         url=url_map.original,
-        short_link=url_map.short
+        short_link=create_full_url(url_map.short)
     )
     return jsonify(return_dict), 201
 
