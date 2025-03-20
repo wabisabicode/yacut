@@ -1,17 +1,11 @@
-import re
-
 from http import HTTPStatus
 from flask import jsonify, request
 
 from . import app, db
 from .constants import SHORT_LINK_MAX_LEN
 from .error_handlers import InvalidAPIUsage
-from .models import URLMap
-from .views import create_full_url, get_unique_short_id
-
-
-def is_latin_and_num(s):
-    return bool(re.search(r'^[a-zA-Z0-9]+$', s))
+from .models import URLMap, get_unique_short_id
+from .views import create_full_url
 
 
 @app.route('/api/id/', methods=['POST'])
@@ -22,28 +16,33 @@ def create_link():
     if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
 
-    if 'custom_id' not in data or data['custom_id'] == '':
-        data['custom_id'] = get_unique_short_id()
+    # if 'custom_id' not in data or data['custom_id'] == '':
+        # data['custom_id'] = get_unique_short_id()
+    # if 'custom_id' not in data:
+        # raise InvalidAPIUsage('BBBBBB')
 
-    custom_id = data['custom_id']
+    # custom_id = data['custom_id']
 
-    if URLMap.get_by_short_link(custom_id) is not None:
-        raise InvalidAPIUsage(
-            'Предложенный вариант короткой ссылки уже существует.'
+    # if URLMap.get_by_short_link(custom_id) is not None:
+    #     raise InvalidAPIUsage(
+    #         'Предложенный вариант короткой ссылки уже существует.'
+    #     )
+    # if not is_latin_and_num(custom_id) or len(custom_id) > SHORT_LINK_MAX_LEN:
+    #     raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+    try:
+        url_map = URLMap.check_short_and_add(data['url'], data['custom_id'], api=True)
+    # url_map = URLMap()
+    # url_map.from_dict(data)
+    # db.session.add(url_map)
+    # db.session.commit()
+
+        return_dict = dict(
+            url=url_map.original,
+            short_link=create_full_url(url_map.short)
         )
-    if not is_latin_and_num(custom_id) or len(custom_id) > SHORT_LINK_MAX_LEN:
-        raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
-
-    url_map = URLMap()
-    url_map.from_dict(data)
-    db.session.add(url_map)
-    db.session.commit()
-
-    return_dict = dict(
-        url=url_map.original,
-        short_link=create_full_url(url_map.short)
-    )
-    return jsonify(return_dict), HTTPStatus.CREATED
+        return jsonify(return_dict), HTTPStatus.CREATED
+    except InvalidAPIUsage as e:
+        raise e
 
 
 @app.route('/api/id/<string:short_id>/')

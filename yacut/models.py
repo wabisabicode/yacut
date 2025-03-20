@@ -1,8 +1,24 @@
 from datetime import datetime
+import random
+import re
+import string
+
+from flask import flash
 
 from yacut import db
 
+from .error_handlers import InvalidAPIUsage
 from .constants import ORIGINAL_LINK_MAX_LEN, SHORT_LINK_MAX_LEN
+
+
+def is_latin_and_num(s):
+    return bool(re.search(r'^[a-zA-Z0-9]+$', s))
+
+
+def get_unique_short_id(length=6):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string
 
 
 class URLMap(db.Model):
@@ -22,6 +38,34 @@ class URLMap(db.Model):
     @staticmethod
     def get_by_short_link(short_link):
         return URLMap.query.filter_by(short=short_link).first()
+
+    @staticmethod
+    def check_short_and_add(original, short, api=False):
+        if not short or short == '':
+            short = get_unique_short_id()
+            while URLMap.get_by_short_link(short) is not None:
+                short = get_unique_short_id()
+
+        elif URLMap.get_by_short_link(short) is not None:
+            if api:
+                raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.')
+            else:
+                flash('Предложенный вариант короткой ссылки уже существует.')
+
+        if not is_latin_and_num(short) or len(short) > SHORT_LINK_MAX_LEN:
+            if api:
+                raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+            else:
+                flash('Указано недопустимое имя для короткой ссылки')
+
+        url_map = URLMap(
+            original=original,
+            short=short
+        )
+
+        db.session.add(url_map)
+        db.session.commit()
+        return url_map
 
     def from_dict(self, data):
         field_mapping = {
