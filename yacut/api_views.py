@@ -1,5 +1,6 @@
 import re
 
+from http import HTTPStatus
 from flask import jsonify, request
 
 from . import app, db
@@ -42,12 +43,12 @@ def create_link():
         url=url_map.original,
         short_link=create_full_url(url_map.short)
     )
-    return jsonify(return_dict), 201
+    return jsonify(return_dict), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<string:short_id>/')
 def get_original_link(short_id):
     item = URLMap.get_by_short_link(short_id)
     if item is None:
-        raise InvalidAPIUsage('Указанный id не найден', 404)
-    return jsonify({'url': item.original}), 200
+        raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.BAD_REQUEST)
+    return jsonify({'url': item.original}), HTTPStatus.OK
