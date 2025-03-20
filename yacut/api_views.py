@@ -1,9 +1,15 @@
+import re
+
 from flask import jsonify, request
 
 from . import app, db
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 from .views import create_full_url, get_unique_short_id
+
+
+def is_latin_and_numeric(s):
+    return bool(re.search(r'^[a-zA-Z0-9]+$', s))
 
 
 @app.route('/api/id/', methods=['POST'])
@@ -19,7 +25,7 @@ def create_link():
         raise InvalidAPIUsage(
             'Предложенный вариант короткой ссылки уже существует.'
         )
-    if not data['custom_id'].isalnum():
+    if not is_latin_and_numeric(data['custom_id']):
         raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
     if len(data['custom_id']) > 16:
         raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
