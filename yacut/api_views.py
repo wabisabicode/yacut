@@ -35,5 +35,5 @@ def get_original_link(short_id):
     item = URLMap.query.filter_by(short=short_id).first()
     print(item, type(item))
     if item is None:
-        raise InvalidAPIUsage('Указанный id не найден')
+        raise InvalidAPIUsage('Указанный id не найден', 404)
     return jsonify({'url': item.original}), 200
