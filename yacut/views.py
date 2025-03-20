@@ -1,8 +1,8 @@
 from flask import abort, flash, redirect, render_template, request
 
-from . import app, db
+from . import app
 from .forms import URLMapForm
-from .models import URLMap, get_unique_short_id
+from .models import URLMap
 
 
 def create_full_url(path):
@@ -29,27 +29,11 @@ def index_view():
             return render_template('index.html', form=form)
 
         short = form.custom_id.data
-        # if not short:
-        #     short = get_unique_short_id()
-        #     while URLMap.get_by_short_link(short) is not None:
-        #         short = get_unique_short_id()
-        # elif URLMap.get_by_short_link(short) is not None:
-        #     flash('Предложенный вариант короткой ссылки уже существует.')
-        #     return render_template('index.html', form=form)
-        # elif not short.isalnum():
-        #     flash('Указано недопустимое имя для короткой ссылки')
-        #     return render_template('index.html', form=form)
 
         url_map = URLMap.check_short_and_add(original, short)
 
         if not url_map:
             return render_template('index.html', form=form)
-        # url_map = URLMap(
-        #     original=original,
-        #     short=short
-        # )
-        # db.session.add(url_map)
-        # db.session.commit()
 
         flash('Ваша новая ссылка готова')
         return render_template(

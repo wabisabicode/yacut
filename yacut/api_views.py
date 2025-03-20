@@ -1,10 +1,10 @@
 from http import HTTPStatus
+
 from flask import jsonify, request
 
-from . import app, db
-from .constants import SHORT_LINK_MAX_LEN
+from . import app
 from .error_handlers import InvalidAPIUsage
-from .models import URLMap, get_unique_short_id
+from .models import URLMap
 from .views import create_full_url
 
 
@@ -17,25 +17,9 @@ def create_link():
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
 
     custom_id = data.get('custom_id')
-    # if 'custom_id' not in data or data['custom_id'] == '':
-        # data['custom_id'] = get_unique_short_id()
-    # if 'custom_id' not in data:
-        # raise InvalidAPIUsage('BBBBBB')
 
-    # custom_id = data['custom_id']
-
-    # if URLMap.get_by_short_link(custom_id) is not None:
-    #     raise InvalidAPIUsage(
-    #         'Предложенный вариант короткой ссылки уже существует.'
-    #     )
-    # if not is_latin_and_num(custom_id) or len(custom_id) > SHORT_LINK_MAX_LEN:
-    #     raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
     try:
         url_map = URLMap.check_short_and_add(data['url'], custom_id, api=True)
-    # url_map = URLMap()
-    # url_map.from_dict(data)
-    # db.session.add(url_map)
-    # db.session.commit()
 
         return_dict = dict(
             url=url_map.original,
